@@ -1,6 +1,6 @@
 # Fast Image Reconstruction with an Event Camera (forked from High Speed and High Dynamic Range Video with an Event Camera)
 
-[![High Speed and High Dynamic Range Video with an Event Camera](http://rpg.ifi.uzh.ch/E2VID/video_thumbnail.png)](https://youtu.be/eomALySSGVU)
+[![High Speed and High Dynamic Range Video with an Event Camera](http://rpg.ifi.uzh.ch/E2VID/video_thumbnail.png)](https://youtu.be/QaGYFtR2-X8)
 
 This code for the paper [**Fast Image Reconstruction with an Event Camera**](https://www.cedricscheerlinck.com/firenet) is based off code for the paper **High Speed and High Dynamic Range Video with an Event Camera** by [Henri Rebecq](http://henri.rebecq.fr), Rene Ranftl, [Vladlen Koltun](http://vladlen.info/) and [Davide Scaramuzza](http://rpg.ifi.uzh.ch/people_scaramuzza.html):
 
