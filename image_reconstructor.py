@@ -28,24 +28,34 @@ class ImageReconstructor:
         print('Image size: {}x{}'.format(self.height, self.width))
 
         self.no_recurrent = options.no_recurrent
+        # 下面这句进不来。
         if self.no_recurrent:
             print('!!Recurrent connection disabled!!')
 
+        # 进行彩色重建，不需要。
         self.perform_color_reconstruction = options.color  # whether to perform color reconstruction (only use this with the DAVIS346color)
         if self.perform_color_reconstruction:
             if options.auto_hdr:
                 print('!!Warning: disabling auto HDR for color reconstruction!!')
             options.auto_hdr = False  # disable auto_hdr for color reconstruction (otherwise, each channel will be normalized independently)
+        # -----------------------------------------------------------------------------
 
+        # CropParameters类的作用如下。
+        #""" Helper class to compute and store useful parameters for pre-processing and post-processing
+        #        of images in and out of E2VID.
+        #        Pre-processing: finding the best image size for the network, and padding the input image with zeros
+        #        Post-processing: Crop the output image back to the original image size
+        #"""
         self.crop = CropParameters(self.width, self.height, self.model.num_encoders)
 
         self.last_states_for_each_channel = {'grayscale': None}
 
-        if self.perform_color_reconstruction:
-            self.crop_halfres = CropParameters(int(width / 2), int(height / 2),
-                                               self.model.num_encoders)
-            for channel in ['R', 'G', 'B', 'W']:
-                self.last_states_for_each_channel[channel] = None
+        # 下面是处理彩色重建的，暂时注释掉。
+        # if self.perform_color_reconstruction:
+        #     self.crop_halfres = CropParameters(int(width / 2), int(height / 2),
+        #                                        self.model.num_encoders)
+        #     for channel in ['R', 'G', 'B', 'W']:
+        #         self.last_states_for_each_channel[channel] = None
 
         self.event_preprocessor = EventPreprocessor(options)
         self.intensity_rescaler = IntensityRescaler(options)

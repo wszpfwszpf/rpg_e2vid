@@ -1,3 +1,4 @@
+
 import torch
 from utils.loading_utils import load_model, get_device
 import numpy as np
@@ -63,6 +64,7 @@ if __name__ == "__main__":
             N = int(width * height * args.num_events_per_pixel)
             print('Will use {} events per tensor (automatically estimated with num_events_per_pixel={:0.2f}).'.format(
                 N, args.num_events_per_pixel))
+
         else:
             print('Will use {} events per tensor (user-specified)'.format(N))
             mean_num_events_per_pixel = float(N) / float(width * height)
@@ -73,6 +75,7 @@ if __name__ == "__main__":
                 print('!!Warning!! the number of events used ({}) seems to be high compared to the sensor size. \
                     The reconstruction results might be suboptimal.'.format(N))
 
+
     initial_offset = args.skipevents
     sub_offset = args.suboffset
     start_index = initial_offset + sub_offset
@@ -80,33 +83,42 @@ if __name__ == "__main__":
     if args.compute_voxel_grid_on_cpu:
         print('Will compute voxel grid on CPU.')
 
-    if args.fixed_duration:
-        event_window_iterator = FixedDurationEventReader(path_to_events,
-                                                         duration_ms=args.window_duration,
-                                                         start_index=start_index)
-    else:
-        event_window_iterator = FixedSizeEventReader(path_to_events, num_events=N, start_index=start_index)
-
+    # if args.fixed_duration:
+    #     event_window_iterator = FixedDurationEventReader(path_to_events,
+    #                                                      duration_ms=args.window_duration,
+    #                                                      start_index=start_index)
+    # else:
+    #     event_window_iterator = FixedSizeEventReader(path_to_events, num_events=N, start_index=start_index)
+    event_window_iterator = FixedSizeEventReader(path_to_events, num_events=N, start_index=start_index)
+    print('event_window_iterator', event_window_iterator)
+    images_count = 100
     with Timer('Processing entire dataset'):
+
         for event_window in event_window_iterator:
-
-            last_timestamp = event_window[-1, 0]
-
-            with Timer('Building event tensor'):
-                if args.compute_voxel_grid_on_cpu:
-                    event_tensor = events_to_voxel_grid(event_window,
-                                                        num_bins=model.num_bins,
-                                                        width=width,
-                                                        height=height)
-                    event_tensor = torch.from_numpy(event_tensor)
-                else:
+            if images_count:
+                last_timestamp = event_window[-1, 0]
+                print('images_count', images_count)
+                with Timer('Building event tensor'):
+                #     if args.compute_voxel_grid_on_cpu:
+                #         event_tensor = events_to_voxel_grid(event_window,
+                #                                             num_bins=model.num_bins,
+                #                                             width=width,
+                #                                             height=height)
+                #         event_tensor = torch.from_numpy(event_tensor)
+                #     else:
+                #         event_tensor = events_to_voxel_grid_pytorch(event_window,
+                #                                                     num_bins=model.num_bins,
+                #                                                     width=width,
+                #                                                     height=height,
+                #                                                     device=device)
                     event_tensor = events_to_voxel_grid_pytorch(event_window,
                                                                 num_bins=model.num_bins,
                                                                 width=width,
                                                                 height=height,
                                                                 device=device)
 
-            num_events_in_window = event_window.shape[0]
-            reconstructor.update_reconstruction(event_tensor, start_index + num_events_in_window, last_timestamp)
+                num_events_in_window = event_window.shape[0]
+                reconstructor.update_reconstruction(event_tensor, start_index + num_events_in_window, last_timestamp)
 
-            start_index += num_events_in_window
+                start_index += num_events_in_window
+                images_count -= 1

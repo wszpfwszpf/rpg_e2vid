@@ -69,17 +69,18 @@ class EventPreprocessor:
         else:
             print('Will normalize event tensors.')
 
+        # 下面是剔除点用的程序，暂时注释掉
         self.hot_pixel_locations = []
-        if options.hot_pixels_file:
-            try:
-                self.hot_pixel_locations = np.loadtxt(options.hot_pixels_file, delimiter=',').astype(np.int)
-                print('Will remove {} hot pixels'.format(self.hot_pixel_locations.shape[0]))
-            except IOError:
-                print('WARNING: could not load hot pixels file: {}'.format(options.hot_pixels_file))
-
+        # if options.hot_pixels_file:
+        #     try:
+        #         self.hot_pixel_locations = np.loadtxt(options.hot_pixels_file, delimiter=',').astype(np.int)
+        #         print('Will remove {} hot pixels'.format(self.hot_pixel_locations.shape[0]))
+        #     except IOError:
+        #         print('WARNING: could not load hot pixels file: {}'.format(options.hot_pixels_file))
+        #
         self.flip = options.flip
-        if self.flip:
-            print('Will flip event tensors.')
+        # if self.flip:
+        #     print('Will flip event tensors.')
 
     def __call__(self, events):
 
@@ -160,7 +161,8 @@ class ImageWriter:
 
     def __init__(self, options):
 
-        self.output_folder = options.output_folder
+        # self.output_folder = options.output_folder
+        self.output_folder = 'outputs'
         self.dataset_name = options.dataset_name
         self.save_events = options.show_events
         self.event_display_mode = options.event_display_mode
